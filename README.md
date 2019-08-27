@@ -1,1 +1,1 @@
-# Data_Cup_AI__Competition
+# Data-Cup-AI-Competition
