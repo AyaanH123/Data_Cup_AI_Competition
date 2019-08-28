@@ -10,18 +10,11 @@ from sklearn.metrics import accuracy_score
 import string
 
 #training data frame
-df_two_fields = jr.create_dataframes_claim_label('../True North AI')
+df_two_fields = jr.create_dataframes_claim_label('../TrueNorthAI')
 
 # split the dataset into training and validation datasets 
 train_x, valid_x, train_y, valid_y = model_selection.train_test_split(df_two_fields['claim'], df_two_fields['label'])
 
-'''
-df_input = jr.create_dataframes_input('../True North AI')
-train_x = df_two_fields['claim']
-valid_x = df_two_fields['label']
-train_y = df_input['claim']
-valid_y = df_input['label']
-'''
 # label encode the target variable 
 encoder = preprocessing.LabelEncoder()
 train_y = encoder.fit_transform(train_y)
@@ -61,11 +54,11 @@ def train_model(classifier, feature_vector_train, label, feature_vector_valid):
     #print(classification_report(valid_y, predictions))
     list2 = valid_x.index
     list3 = []  
-    list_predictions = predictions.tolist()
+    list_predictions = list(predictions)
     for i in range(0,len(list2)):
-        list3.append(str(list_predictions[i]) + ', ' + str(list2[i]))
+        list3.append(str(str(list2[i]) + ", " + str(list_predictions[i])))
         
-    np.savetxt("predictions.txt", list3)    
+    np.savetxt("predictions.txt", list3, fmt='%s')
 
 #Logistic Regression
 #accuracy = train_model(linear_model.LogisticRegression(), xtrain_count, train_y, xvalid_count)
