@@ -20,7 +20,7 @@ df_input = jr.create_dataframes_input('../True North AI')
 train_x = df_two_fields['claim']
 valid_x = df_two_fields['label']
 train_y = df_input['claim']
-train_y = df_input['label']
+valid_y = df_input['label']
 '''
 # label encode the target variable 
 encoder = preprocessing.LabelEncoder()
@@ -53,50 +53,26 @@ tfidf_vect_ngram_chars.fit(df_two_fields['claim'])
 xtrain_tfidf_ngram_chars =  tfidf_vect_ngram_chars.transform(train_x) 
 xvalid_tfidf_ngram_chars =  tfidf_vect_ngram_chars.transform(valid_x) 
 
-def train_model(classifier, feature_vector_train, label, feature_vector_valid, is_neural_net=False):
+def train_model(classifier, feature_vector_train, label, feature_vector_valid):
     classifier.fit(feature_vector_train, label)
     predictions = classifier.predict(feature_vector_valid)
-    
-    print(accuracy_score(valid_y, predictions))
-    print(confusion_matrix(valid_y, predictions))
-    print(classification_report(valid_y, predictions))
-    
-    #printing predictions
-    np.savetxt("predictions.txt",valid_y)
-    
-    if is_neural_net:
-        predictions = predictions.argmax(axis=-1)
-    return metrics.accuracy_score(predictions, valid_y)
-
-#Naive Bayes
-'''
-accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_count, train_y, xvalid_count)
-
-accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_tfidf, train_y, xvalid_tfidf)
-
-accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram)
-
-accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_tfidf_ngram_chars, train_y, xvalid_tfidf_ngram_chars)
-'''
-
-#Bagging Model
-'''
-accuracy = train_model(ensemble.RandomForestClassifier(), xtrain_count, train_y, xvalid_count)
-
-accuracy = train_model(ensemble.RandomForestClassifier(), xtrain_tfidf, train_y, xvalid_tfidf)
-'''
-
-#Support Vector Machine
-'''
-accuracy = train_model(svm.SVC(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram)
-'''
+    #print(accuracy_score(valid_y, predictions))
+    #print(confusion_matrix(valid_y, predictions))
+    #print(classification_report(valid_y, predictions))
+    list2 = valid_x.index
+    list3 = []  
+    list_predictions = predictions.tolist()
+    for i in range(0,len(list2)):
+        list3.append(str(list_predictions[i]) + ', ' + str(list2[i]))
+        
+    np.savetxt("predictions.txt", list3)    
 
 #Logistic Regression
-
 #accuracy = train_model(linear_model.LogisticRegression(), xtrain_count, train_y, xvalid_count)
 
-#accuracy = train_model(linear_model.LogisticRegression(), xtrain_tfidf, train_y, xvalid_tfidf)
-
-accuracy = train_model(linear_model.LogisticRegression(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram)
+accuracy = train_model(linear_model.LogisticRegression(), xtrain_tfidf, train_y, xvalid_tfidf)
+#accuracy = train_model(linear_model.LogisticRegression(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram)
 
 #accuracy = train_model(linear_model.LogisticRegression(), xtrain_tfidf_ngram_chars, train_y, xvalid_tfidf_ngram_chars)
+
+
