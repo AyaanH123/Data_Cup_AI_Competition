@@ -78,8 +78,25 @@ accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_tfidf_ngram, train_y,
 
 accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_tfidf_ngram_chars, train_y, xvalid_tfidf_ngram_chars)
 '''
-# RF on Count Vectors
+
+#Bagging Model
+'''
 accuracy = train_model(ensemble.RandomForestClassifier(), xtrain_count, train_y, xvalid_count)
 
-# RF on Word Level TF IDF Vectors
 accuracy = train_model(ensemble.RandomForestClassifier(), xtrain_tfidf, train_y, xvalid_tfidf)
+'''
+
+#Support Vector Machine
+'''
+accuracy = train_model(svm.SVC(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram)
+'''
+
+#Logistic Regression
+
+#accuracy = train_model(linear_model.LogisticRegression(), xtrain_count, train_y, xvalid_count)
+
+#accuracy = train_model(linear_model.LogisticRegression(), xtrain_tfidf, train_y, xvalid_tfidf)
+
+accuracy = train_model(linear_model.LogisticRegression(), xtrain_tfidf_ngram, train_y, xvalid_tfidf_ngram)
+
+#accuracy = train_model(linear_model.LogisticRegression(), xtrain_tfidf_ngram_chars, train_y, xvalid_tfidf_ngram_chars)
