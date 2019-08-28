@@ -6,7 +6,7 @@ def create_dataframes(path_to_TrueNorthAI):
     df1 = pd.read_json(path+"/train.json")
     df1.set_index('id', inplace=True)
     cols = df1.columns.tolist()
-    cols = ['claim', 'claimant', 'date', 'related_articles', 'label']
+    cols = ['claim', 'label']
     df1 = df1[cols]
     return df1
 def create_dataframes2(path_to_TrueNorthAI):
