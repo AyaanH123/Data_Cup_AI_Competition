@@ -4,10 +4,12 @@ import numpy as np
 from sklearn import model_selection, preprocessing, linear_model, naive_bayes, metrics, svm
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn import decomposition, ensemble
-
+from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score
 import string
-from keras.preprocessing import text, sequence
-from keras import layers, models, optimizers
+#from keras.preprocessing import text, sequence
+#from keras import layers, models, optimizers
 
 df_two_fields = jr.create_dataframes_claim_label('../True North AI')
 # split the dataset into training and validation datasets 
@@ -45,29 +47,20 @@ xtrain_tfidf_ngram_chars =  tfidf_vect_ngram_chars.transform(train_x)
 xvalid_tfidf_ngram_chars =  tfidf_vect_ngram_chars.transform(valid_x) 
 
 # load the pre-trained word-embedding vectors 
-embeddings_index = {}
-for i, line in enumerate(open('data/wiki-news-300d-1M.vec')):
-    values = line.split()
-    embeddings_index[values[0]] = np.asarray(values[1:], dtype='float32')
 
-token = text.Tokenizer()
-token.fit_on_texts(df_two_fields['claim'])
-word_index = token.word_index
 
 # convert text to sequence of tokens and pad them to ensure equal length vectors 
-train_seq_x = sequence.pad_sequences(token.texts_to_sequences(train_x), maxlen=70)
-valid_seq_x = sequence.pad_sequences(token.texts_to_sequences(valid_x), maxlen=70)
+#train_seq_x = sequence.pad_sequences(token.texts_to_sequences(train_x), maxlen=70)
+#valid_seq_x = sequence.pad_sequences(token.texts_to_sequences(valid_x), maxlen=70)
 
-# create token-embedding mapping
-embedding_matrix = np.zeros((len(word_index) + 1, 300))
-for word, i in word_index.items():
-    embedding_vector = embeddings_index.get(word)
-    if embedding_vector is not None:
-        embedding_matrix[i] = embedding_vector
+
         
 def train_model(classifier, feature_vector_train, label, feature_vector_valid, is_neural_net=False):
     classifier.fit(feature_vector_train, label)
     predictions = classifier.predict(feature_vector_valid)
+    print(accuracy_score(valid_y, predictions))
+    print(confusion_matrix(valid_y, predictions))
+    print(classification_report(valid_y, predictions))
     if is_neural_net:
         predictions = predictions.argmax(axis=-1)
     
@@ -85,6 +78,7 @@ print("NB, N-Gram Vectors: ", accuracy)
 
 accuracy = train_model(naive_bayes.MultinomialNB(), xtrain_tfidf_ngram_chars, train_y, xvalid_tfidf_ngram_chars)
 print("NB, CharLevel Vectors: ", accuracy)
+
 
 #df1 = jr.create_dataframes('../True North AI')
 #df2 = jr.create_dataframes2('../True North AI')
