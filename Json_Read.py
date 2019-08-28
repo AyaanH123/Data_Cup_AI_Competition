@@ -18,6 +18,16 @@ def create_dataframes_claim_label(path_to_TrueNorthAI):
     cols = ['claim', 'label']
     df = df[cols]
     return df
+
+#For input data
+def create_dataframes_input(path_to_TrueNorthAI):
+    path = path_to_TrueNorthAI
+    df = pd.read_json(path+"/metadata.json")
+    df.set_index('id', inplace=True)
+    cols = df.columns.tolist()
+    cols = ['claim', 'label']
+    df = df[cols]
+    return df
     
 def create_dataframes2(path_to_TrueNorthAI):
     path = path_to_TrueNorthAI
