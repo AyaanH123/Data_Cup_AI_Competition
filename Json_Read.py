@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import json
+
 def create_dataframes(path_to_TrueNorthAI):
     path = path_to_TrueNorthAI
     df = pd.read_json(path+"/train.json")
@@ -27,7 +28,7 @@ def create_dataframes_input(path_to_TrueNorthAI):
     df = pd.DataFrame(data)
     df.set_index('id', inplace=True)
     cols = df.columns.tolist()
-    cols = ['claim', 'label']
+    cols = ['claim']
     df = df[cols]
     return df
     
@@ -43,9 +44,3 @@ def create_dataframes2(path_to_TrueNorthAI):
     df = pd.DataFrame(data)
     df.set_index('ID', inplace=True) 
     return df
-
-if __name__ == "__main__":
-    create_dataframes('../TrueNorthAI')
-    create_dataframes2('../TrueNorthAI')
-    create_dataframes_claim_label('../TrueNorthAI')
-    create_dataframes_input('.../TrueNorthAI')

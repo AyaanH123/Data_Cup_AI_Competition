@@ -7,11 +7,10 @@ from sklearn import decomposition, ensemble
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
-import string
 
 #training data frame
-df_two_fields = jr.create_dataframes_claim_label('../TrueNorthAI')
-df_input = jr.create_dataframes_input('../TrueNorthAI')
+df_two_fields = jr.create_dataframes_claim_label('/usr/src')
+df_input = jr.create_dataframes_input('/usr/local/dataset​')
 
 # split the dataset into training and validation datasets 
 #train_x, valid_x, train_y, valid_y = model_selection.train_test_split(df_two_fields['claim'], df_two_fields['label'])
@@ -19,12 +18,12 @@ df_input = jr.create_dataframes_input('../TrueNorthAI')
 train_x = df_two_fields['claim']
 train_y = df_two_fields['label']
 valid_x = df_input['claim']
-valid_y = df_input['label']
+#valid_y = df_input['label']
 
 # label encode the target variable 
 encoder = preprocessing.LabelEncoder()
 train_y = encoder.fit_transform(train_y)
-valid_y = encoder.fit_transform(valid_y)
+#valid_y = encoder.fit_transform(valid_y)
 
 # create a count vectorizer object 
 count_vect = CountVectorizer(analyzer='word', token_pattern=r'\w{1,}')
@@ -55,16 +54,16 @@ xvalid_tfidf_ngram_chars =  tfidf_vect_ngram_chars.transform(valid_x)
 def train_model(classifier, feature_vector_train, label, feature_vector_valid):
     classifier.fit(feature_vector_train, label)
     predictions = classifier.predict(feature_vector_valid)
-    print(accuracy_score(valid_y, predictions))
-    print(confusion_matrix(valid_y, predictions))
-    print(classification_report(valid_y, predictions))
+    #print(accuracy_score(valid_y, predictions))
+    #print(confusion_matrix(valid_y, predictions))
+    #print(classification_report(valid_y, predictions))
     list2 = valid_x.index
     list3 = []  
     list_predictions = list(predictions)
     for i in range(0,len(list2)):
         list3.append(str(str(list2[i]) + ", " + str(list_predictions[i])))
         
-    np.savetxt("predictions.txt", list3, fmt='%s')
+    np.savetxt("/usr/local/predictions.txt", list3, fmt='%s')
 
 #Logistic Regression
 #accuracy = train_model(linear_model.LogisticRegression(), xtrain_count, train_y, xvalid_count)
