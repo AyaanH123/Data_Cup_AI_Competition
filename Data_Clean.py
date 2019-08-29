@@ -11,9 +11,15 @@ import string
 
 #training data frame
 df_two_fields = jr.create_dataframes_claim_label('../TrueNorthAI')
+df_input = jr.create_dataframes_input('../TrueNorthAI')
 
 # split the dataset into training and validation datasets 
-train_x, valid_x, train_y, valid_y = model_selection.train_test_split(df_two_fields['claim'], df_two_fields['label'])
+#train_x, valid_x, train_y, valid_y = model_selection.train_test_split(df_two_fields['claim'], df_two_fields['label'])
+
+train_x = df_two_fields['claim']
+train_y = df_two_fields['label']
+valid_x = df_input['claim']
+valid_y = df_input['label']
 
 # label encode the target variable 
 encoder = preprocessing.LabelEncoder()
@@ -49,9 +55,9 @@ xvalid_tfidf_ngram_chars =  tfidf_vect_ngram_chars.transform(valid_x)
 def train_model(classifier, feature_vector_train, label, feature_vector_valid):
     classifier.fit(feature_vector_train, label)
     predictions = classifier.predict(feature_vector_valid)
-    #print(accuracy_score(valid_y, predictions))
-    #print(confusion_matrix(valid_y, predictions))
-    #print(classification_report(valid_y, predictions))
+    print(accuracy_score(valid_y, predictions))
+    print(confusion_matrix(valid_y, predictions))
+    print(classification_report(valid_y, predictions))
     list2 = valid_x.index
     list3 = []  
     list_predictions = list(predictions)
