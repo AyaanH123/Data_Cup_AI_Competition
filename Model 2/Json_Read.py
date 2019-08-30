@@ -13,7 +13,9 @@ def create_dataframes(path_to_TrueNorthAI):
 
 def create_dataframes_claim_label(path_to_TrueNorthAI):
     path = path_to_TrueNorthAI
-    df = pd.read_json(path+"/train.json")
+    with open(path+"/train.json") as f:
+        data = json.load(f)
+    df = pd.DataFrame(data)
     df.set_index('id', inplace=True)
     cols = df.columns.tolist()
     cols = ['claim', 'label']
