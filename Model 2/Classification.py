@@ -84,3 +84,6 @@ for Product, category_id in sorted(category_codes.items()):
     feature_names = np.array(tfidf.get_feature_names())[indices]
     unigrams = [v for v in feature_names if len(v.split(' ')) == 1]
     bigrams = [v for v in feature_names if len(v.split(' ')) == 2]
+    
+    
+#https://github.com/miguelfzafra/Latest-News-Classifier/blob/master/0.%20Latest%20News%20Classifier/03.%20Feature%20Engineering/03.%20Feature%20Engineering.ipynb
