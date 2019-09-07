@@ -13,7 +13,6 @@ def articles():
             article_content.append(f_input.read())
     data = {'ID': article_id, 'claim': article_content}
     df = pd.DataFrame(data)
-    df.set_index('ID', inplace=True)
     return df
 def filter_all_2(df):
     df = preprocess.symbols(df)
@@ -28,23 +27,35 @@ def filter_all_2(df):
         second_clean = preprocess.remove_stopwords(tokenizing_clean)
         filtered_text.append(second_clean)
     df['Content'] = filtered_text
-    cols = ['Content']
+    cols = ['ID', 'Content']
     df = df[cols]
     return df
+def articles_2():
+    df_new = articles()
+    cleaned_df_new = filter_all_2(df_new)
+    pd.to_pickle(cleaned_df_new, 'article_dataframe.pkl')
+"""
 def final_df():
     cleaned_df = preprocess.filter_all()
     cleaned_df['article_content'] = np.nan
+    cleaned_df['article_content'] = cleaned_df['article_content'].astype(object)
+    final_df_1 = pd.DataFrame(columns = ['ID', 'claim', 'label', 'related_articles', 'article_content'])
+    final_df_1.set_index('ID', inplace=True)
     df_new = articles()
     cleaned_df_new = filter_all_2(df_new)
+    cleaned_df_new_list = cleaned_df_new.values.tolist()
     for value in cleaned_df['related_articles']:
         article_list = []
         for i in value:
-            article_list.append(cleaned_df_new.loc[i, ['related_articles']])
-        article_list =  " ||| ".join(article_list)
-        cleaned_df.at[cleaned_df.index[cleaned_df['related_articles'] == value], 'article content'] = article_list
-    return cleaned_df
+            for list in cleaned_df_new_list:
+                list[0] = int(list[0])
+                if list[0] == i:
+                    article_list.append(list[1])
+        article_list_2 = (int(cleaned_df.index[cleaned_df['related_articles'] == value]), list(cleaned_df.loc[cleaned_df.index[cleaned_df['related_articles'] == value], 'claim']), int(cleaned_df.loc[cleaned_df.index[cleaned_df['related_articles'] == value], 'label']), list(value), list(article_list))
+        article_list_2 = list(article_list_2)
+        final_df_1.loc[len(final_df_1), :] = article_list_2
+    return final_df_1
+"""
 
 if __name__ == "__main__":
-    df_final = final_df()
-    with open('final_dataframe', 'wb') as output:
-        pickle.dump(df_final, output)
+    articles_2()
