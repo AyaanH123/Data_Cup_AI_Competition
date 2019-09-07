@@ -3,6 +3,7 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import json
+import pickle
 
 def import_data():
     with open('../train.json') as f:
@@ -10,32 +11,9 @@ def import_data():
     df = pd.DataFrame(data)
     df.set_index('id', inplace=True)
     cols = df.columns.tolist()
-    cols = ['claim', 'label']
+    cols = ['claim', 'label', 'related_articles']
     df = df[cols]
     return df
-    """
-    with open('../train.json') as f:
-        data = json.load(f)
-    df = pd.DataFrame(data)
-    cols = df.columns.tolist()
-    cols = ['claim', 'label']
-    df = df[cols]
-
-    df2 = pd.read_csv('../train.csv', sep="\t")
-    cols2 = ['claim', 'label']
-    df2 = df2[cols2]
-
-    df_valid = pd.read_csv('../valid.csv', sep="\t")
-    cols3 = ['claim', 'label']
-    df_valid = df_valid[cols3]
-
-    df_test = pd.read_csv('../test.csv', sep="\t")
-    cols4 = ['claim', 'label']
-    df_test = df_test[cols4]
-
-    df_train = pd.concat([df, df2, df_valid, df_test], ignore_index=True)
-    """
-
 def symbols(df):
     df['claim'] = df['claim'].str.replace("\r", " ")
     df['claim'] = df['claim'].str.replace("\n", " ")
@@ -96,6 +74,7 @@ def filter_all():
     df['claim'] = filtered_text
     return df
 
+
 if __name__ == "__main__":
     cleaned_df = filter_all()
-    print(cleaned_df)
+    pd.to_pickle(cleaned_df, 'train_dataframe.pkl')
