@@ -1,0 +1,109 @@
+import pandas as pd
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+import json
+import pickle
+import os
+import numpy as np
+from statistics import mean
+import gensim
+# upgrade gensim if you can't import softcossim
+from gensim.matutils import softcossim
+from gensim import corpora
+import gensim.downloader as api
+from gensim.utils import simple_preprocess
+print(gensim.__version__)
+#> '3.6.0'
+
+# Download the FastText model
+fasttext_model300 = api.load('fasttext-wiki-news-subwords-300')
+
+def import_data():
+    with open('../train.json') as f:
+        data = json.load(f)
+    df = pd.DataFrame(data)
+    df.set_index('id', inplace=True)
+    cols = df.columns.tolist()
+    cols = ['claim', 'label', 'related_articles']
+    df = df[cols]
+    return df
+
+def articles():
+    article_id = []
+    article_content = []
+    for filename in os.listdir('../train_articles/'):
+        article_id.append(filename.split('.')[0])
+        with open('../train_articles/' + filename, encoding="utf8") as f_input:
+            article_content.append(f_input.read())
+    data = {'ID': article_id, 'Content': article_content}
+    df = pd.DataFrame(data)
+    return df
+
+article_dataframe_main = articles()
+article_dataframe_main.set_index('ID', inplace=True)
+train_dataframe_main = import_data()
+x = train_dataframe_main.index.values.tolist()
+y = article_dataframe_main.index.values.tolist()
+
+def correlation(m):
+    m = int(m)
+    claim = train_dataframe_main.loc[x[m], 'claim']
+    label = train_dataframe_main.loc[x[m], 'label']
+    articles_list = []
+    cosine_list = []
+    documents = []
+    documents.append(claim)
+    for i in train_dataframe_main.loc[x[m], 'related_articles']:
+        article1 = article_dataframe_main.loc[str(i), 'Content']
+        articles_list.append(article1)
+        documents.append(article1)
+    dictionary = corpora.Dictionary([simple_preprocess(doc) for doc in documents])
+
+    # Prepare the similarity matrix
+    similarity_matrix = fasttext_model300.similarity_matrix(dictionary, tfidf=None, threshold=0.0, exponent=2.0,
+                                                            nonzero_limit=100)
+
+    # Convert the sentences into bag-of-words vectors.
+    sentences = []
+    for value in documents:
+        sent1 = dictionary.doc2bow(simple_preprocess(value))
+        sentences.append(sent1)
+
+    def create_soft_cossim_matrix(sentences):
+        len_array = np.arange(len(sentences))
+        xx, yy = np.meshgrid(len_array, len_array)
+        cossim_mat = pd.DataFrame(
+            [[round(softcossim(sentences[i], sentences[j], similarity_matrix), 2) for i, j in zip(x, y)] for y, x in
+             zip(xx, yy)])
+        return cossim_mat
+
+    cossim_matrix = create_soft_cossim_matrix(sentences)
+    return claim, label, cossim_matrix
+
+list1 = []
+list2 = []
+list3 = []
+for i in range(0, 10):
+    claim, label, cossim_matrix = correlation(i)
+    listx = []
+    if label == int(0):
+        listx.append(claim)
+        listx.append(label)
+        listx.append(list(cossim_matrix[0]))
+        list1.append(listx)
+    elif label == int(1):
+        listx.append(claim)
+        listx.append(label)
+        listx.append(list(cossim_matrix[0]))
+        list2.append(listx)
+    elif label == int(2):
+        listx.append(claim)
+        listx.append(label)
+        listx.append(list(cossim_matrix[0]))
+        list3.append(listx)
+
+print(list1)
+print(list2)
+print(list3)
+
