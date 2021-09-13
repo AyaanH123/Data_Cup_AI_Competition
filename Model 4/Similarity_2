@@ -84,6 +84,7 @@ def correlation(m):
 list1 = []
 list2 = []
 list3 = []
+
 for i in range(0, 10):
     claim, label, cossim_matrix = correlation(i)
     listx = []
